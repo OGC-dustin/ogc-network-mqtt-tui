@@ -1,0 +1,3 @@
+[submodule "ogc_python_tools"]
+	path = ogc_python_tools
+	url = https://github.com/OGC-dustin/ogc_python_tools.git
