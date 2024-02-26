@@ -32,6 +32,12 @@ class base_window:
     cursor_position_y = 0
     cursor_position_x = 0
 
+    mouse_id = 0
+    mouse_position_x = 0
+    mouse_position_y = 0
+    mouse_z = 0
+    mouse_bstate = 0
+
 def process_cursor_movement( key ):
     # move cursor
     if ( key == curses.KEY_DOWN ):
@@ -51,7 +57,7 @@ def process_cursor_movement( key ):
     base_window.screen.move( base_window.cursor_position_y, base_window.cursor_position_x )
 
 def update_status_bar():
-    status_bar_string = "Press 'q' to quit | Input: (0x%02X), Cursor Pos: %u, %u" % ( base_window.input_key, base_window.cursor_position_y, base_window.cursor_position_x )
+    status_bar_string = "Press 'q' to quit | Key: (0x%02X), Cursor: y(0x%02X), x(0x%02X), Mouse: i(0x%02X), y(0x%02X), x(0x%02X), z(0x%02X), s(0x%02X)" % ( base_window.input_key, base_window.cursor_position_y, base_window.cursor_position_x, base_window.mouse_id, base_window.mouse_position_y, base_window.mouse_position_x, base_window.mouse_z, base_window.mouse_bstate )
     base_window.screen.attron( curses.color_pair( COLOR_STATUS ) )
     base_window.screen.addstr( ( base_window.screen_height - 1 ), 0, status_bar_string[ :( base_window.screen_width - 1 ) ] )
     base_window.screen.addstr( ( base_window.screen_height - 1 ), len( status_bar_string ), ( " " * ( base_window.screen_width - len( status_bar_string ) - 1 ) ) )
@@ -62,6 +68,9 @@ def tui_state_machine( base_screen ):
     # clear the screen
     base_window.screen.clear()
     base_window.screen.refresh()
+
+    # setup mouse
+    curses.mousemask( -1 )
 
     # setup some basic colors
     curses.start_color()
@@ -109,6 +118,9 @@ def tui_state_machine( base_screen ):
             # Process key presses by state of machine
             process_cursor_movement( base_window.input_key )
             if ( ( base_window.screen_height >= base_window.MIN_HEIGHT ) and ( base_window.screen_width >= base_window.MIN_WIDTH ) ):
+                if ( base_window.input_key == curses.KEY_MOUSE ):
+                    base_window.mouse_id, base_window.mouse_position_x, base_window.mouse_position_y, base_window.mouse_z, base_window.mouse_bstate = curses.getmouse()
+                    
                 update_status_bar()
             else:
                 warning_screen_size_string = "Screen size reduced below minimum requirements, please increase window size"
