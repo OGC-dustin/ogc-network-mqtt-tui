@@ -24,8 +24,8 @@ class base_window:
     input_key = 0
     screen = 0
 
-    MIN_HEIGHT = 25
-    MIN_WIDTH = 80
+    MIN_HEIGHT = 50
+    MIN_WIDTH = 120
     screen_height = 0
     screen_width = 0
 
